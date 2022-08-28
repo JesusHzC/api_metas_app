@@ -38,22 +38,59 @@ router.get('/', function(req, res, next) {
 
 /* GET goal by id. */
 router.get('/:id', function(req, res, next) {
-  res.send('metas');
+  const goalId = req.params.id
+  const goal = goals.find(item => item.id === goalId)
+  if (!goal) {
+    return res.sendStatus(404)
+  }
+  res.send(goal)
 });
 
 /* POST create goal. */
 router.post('/', function(req, res, next) {
-  res.send('metas');
+  const goal = req.body
+
+  const exists = goals.find(item => item.id === goal.id)
+
+  if (exists) {
+    return res.send('This goal id already exists')
+  }
+
+  goals.push(goal)
+  res.status(201)
+  res.send(goal)
 });
 
 /* PUT update goal. */
 router.put('/:id', function(req, res, next) {
-  res.send('metas');
+  const goalId = req.params.id
+  const goal = req.body
+  
+  if (goal.id !== goalId) {
+    return res.sendStatus(409)
+  }
+
+  const index = goals.findIndex(item => item.id === goalId)
+
+  if (index === -1) {
+    return res.sendStatus(404)
+  }
+
+  goals[index] = goal
+  res.send(goal)
+
 });
 
 /* PUT delete goal. */
 router.delete('/:id', function(req, res, next) {
-  res.send('metas');
+  const goalId = req.params.id
+  const index = goals.findIndex(item => item.id === goalId)
+
+  if (index === -1) {
+    return res.sendStatus(404)
+  }
+  goals.splice(index, 1)
+  res.sendStatus(204)
 });
 
 module.exports = router;
